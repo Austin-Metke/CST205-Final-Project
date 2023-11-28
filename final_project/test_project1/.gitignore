@@ -1,0 +1,18 @@
+# Ignore files
+# Ignore photo files
+*.pdf
+*.png
+*.jpg
+
+# Ignore Static Directory
+Static/*
+.DS_Store
+
+
+# Ignore pycache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.cache
+
