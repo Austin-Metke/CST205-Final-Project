@@ -6,7 +6,9 @@ from wtforms.validators import DataRequired
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from datetime import timedelta
-import os
+import os, requests
+from base64 import b64encode
+from urllib.parse import urlencode
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'default_secret_key')
@@ -69,15 +71,24 @@ def callback():
         print(f"Error in callback: {e}")
         return "Error in callback"
 
-@app.route('/logout')
-def logout():
-    # # Clear user's session
-    session.clear()
-    # Clear the user's session
-    session.pop('token_info', None)
 
-    # Redirect to the login page
-    return render_template('logout.html')
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    # Clear user's session
+    session.clear()
+
+
+    # Redirect to the Spotify logout page with a specified next parameter
+    spotify_logout_url = 'https://www.spotify.com/logout/'
+    next_url = url_for('logout')
+
+    # Construct the complete logout URL
+    full_logout_url = f"{spotify_logout_url}?next={next_url}"
+
+    # Perform a temporary redirect (307) to the constructed URL
+    return redirect(full_logout_url, code=302)
+
 
 @app.route('/add_song/<playlist_id>', methods=['GET', 'POST'])
 def add_song(playlist_id):
