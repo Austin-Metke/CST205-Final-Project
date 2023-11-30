@@ -7,8 +7,12 @@
 
     <link rel="stylesheet" href="{{ url_for('static', filename='index_styles.css') }}">
 </head>
+
 <body>
+
+<header>
     <h1>Welcome to the Spotify Playlist Creator!</h1>
+</header>
     {% if user_info %}
         <p>Hello, {{ user_info['display_name'] }}! <a class="btn" href="{{ url_for('logout') }}">Logout</a></p>
         <p>Your Spotify ID: {{ user_info['id'] }}</p>
@@ -17,7 +21,11 @@
         <br>
         <a class="btn" href="{{ url_for('view_playlists') }}">View Playlists</a>
     {% else %}
-        <a class="btn" href="{{ url_for('login') }}">Login with Spotify</a>
+
+    <a class="btn" href="{{ url_for('login') }}">
+        <img class="SpotifyIconRemovebgPreview1" style="width: 52px; height: 77px" src="{{ url_for('static', filename='spotify.png' )}}" />
+ <div style="width: 285px; height: 38px; text-align: center; color: white; font-size: 32px; font-weight: 700;">Login with Spotify</div>
+</a>
     {% endif %}
 </body>
 </html>
