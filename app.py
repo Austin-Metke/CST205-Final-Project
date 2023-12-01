@@ -31,9 +31,6 @@ SPOTIPY_SCOPE = 'playlist-modify-public playlist-modify-private user-library-rea
 # Spotipy OAuth handler
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SPOTIPY_SCOPE)
 
-# Spotify Web Playback SDK script
-SPOTIFY_PLAYER_SCRIPT = 'https://sdk.scdn.co/spotify-player.js'
-
 class CreatePlaylistForm(FlaskForm):
     playlist_name = StringField('Playlist Name', validators=[DataRequired()])
     submit = SubmitField('Create Playlist')
@@ -69,7 +66,7 @@ def callback():
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-    
+
     if isLoggedIn():
         # Revoke the access token on Spotify's side
         token = session['token_info']['access_token']
@@ -78,7 +75,7 @@ def logout():
         requests.post(revoke_url, headers=headers)
 
         # Remove the stored token info from the session
-        session.pop('token_info', None)
+        session.clear()
 
     return redirect(url_for('index'))
 
@@ -114,10 +111,15 @@ def create_playlist():
             playlist_name = form.playlist_name.data
             playlist = sp.user_playlist_create(user_info['id'], playlist_name)
 
-
             return redirect(url_for('view_playlists'))
 
     return render_template('create_playlist.html', form=form)
+
+
+@app.route('/playlist_maker')
+def playlist_maker():
+    if(isLoggedIn):
+        return render_template('playlist_maker.html')
 
 @app.route('/view_playlists')
 def view_playlists():
