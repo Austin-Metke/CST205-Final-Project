@@ -1,6 +1,4 @@
-# CST205-Final-Project
-
-# Setup Guide
+# CST205-Final-Project Setup Guide
 
 This guide will walk you through the process of creating a Spotify Developer App and obtaining the necessary credentials (Client ID and Client Secret) in order to use this app.
 
@@ -21,7 +19,7 @@ Open the `app.py` file. Follow these steps to configure your application with th
 1. Install the necessary libraries if you haven't already:
 
    ```bash
-   pip install spotipy flask flask-wtf flask-bootstrap
+   pip install spotipy flask flask-wtf flask-session bootstrap-flask
    ```
 
 2. Place your spoitfy app credentials at the top of the app.py file:
@@ -37,11 +35,13 @@ Open the `app.py` file. Follow these steps to configure your application with th
 ## Step 3: Run
 
   If you are on Linux or MacOS you can run Flask web server with the following command:
-    ```bash
+  
+   ```bash
     ./run
-    ```
+   ```
   For windows you'll have to run the following command:
-  ```
+  
+  ```bash
   flask --app $app.py run --debug
   ```
   
