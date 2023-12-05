@@ -142,7 +142,7 @@ def view_playlists():
 def top_artists(time_range='medium_term'):
     if isLoggedIn():
         artists = get_artists(time_range)
-        return render_template('top_artists.html', top_artists=enumerate(artists, start=1))
+        return render_template('top_artists.html', top_artists=enumerate(artists, start=1), time_range=time_range)
     return redirect(url_for('index'))
 
 

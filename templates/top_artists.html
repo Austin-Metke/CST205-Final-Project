@@ -11,7 +11,15 @@
 </head>
 
 <header>
-    <h1>Your Top Artists!</h1>
+
+    {% if time_range == 'short_term' %}
+    <h1>Your Top Artists From The Past Month!</h1>
+    {% elif time_range == 'medium_term' %}
+    <h1>Your Top Artists From the Past 6 Months!</h1>
+    {% else %}
+    <h1>Your Top Artists From All Time!</h1>
+    {% endif %}
+    
 </header>
 
 <body>
