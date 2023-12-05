@@ -42,6 +42,6 @@ Open the `app.py` file. Follow these steps to configure your application with th
   For windows you'll have to run the following command:
   
   ```bash
-  flask --app $app.py run --debug
+  flask --app app.py run --debug
   ```
   
