@@ -4,7 +4,7 @@ from flask_wtf import FlaskForm
 from flask_session import Session
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
-from spotipy import Spotify
+from spotipy import Spotify, util
 from spotipy.oauth2 import SpotifyOAuth
 from datetime import timedelta
 import os, requests
@@ -26,7 +26,7 @@ SPOTIPY_CLIENT_SECRET = 'cea29e8759f64f238e82e1d2b266f64e'
 SPOTIPY_REDIRECT_URI = 'http://localhost:5000/callback'
 
 # Spotify API scope for playlist creation
-SPOTIPY_SCOPE = 'playlist-modify-public playlist-modify-private user-library-read'
+SPOTIPY_SCOPE = 'playlist-modify-public playlist-modify-private user-library-read user-top-read'
 
 # Spotipy OAuth handler
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SPOTIPY_SCOPE)
@@ -67,15 +67,14 @@ def callback():
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
 
-    if isLoggedIn():
-        # Revoke the access token on Spotify's side
-        token = session['token_info']['access_token']
-        revoke_url = 'https://accounts.spotify.com/api/token/revoke'
-        headers = {'Authorization': f'Bearer {token}'}
-        requests.post(revoke_url, headers=headers)
+    # Revoke the access token on Spotify's side
+    token = session['token_info']['access_token']
+    revoke_url = 'https://accounts.spotify.com/api/token/revoke'
+    headers = {'Authorization': f'Bearer {token}'}
+    requests.post(revoke_url, headers=headers)
 
-        # Remove the stored token info from the session
-        session.clear()
+    # Remove the stored token info from the session
+    session.clear()
 
     return redirect(url_for('index'))
 
@@ -127,7 +126,7 @@ def view_playlists():
     # Retrieve access token from the session
     token_info = session.get('token_info', None)
 
-    if token_info:
+    if isLoggedIn():
         sp = Spotify(auth=token_info['access_token'])
         user_info = sp.me()
 
@@ -136,8 +135,19 @@ def view_playlists():
 
         return render_template('view_playlists.html', playlists=playlists)
 
-    return "User not authenticated."
+    return redirect(url_for('index'))
 
+@app.route('/top_artists')
+def top_artists():
+    if isLoggedIn():
+        sp = Spotify(auth_manager=sp_oauth)
+
+        limit=10
+        time_range='medium_term'
+        results = sp.current_user_top_artists(time_range=time_range, limit=limit)
+        top_artists = [artist['name'] for artist in results['items']]
+        return render_template('top_artists.html', top_artists=enumerate(top_artists, start=1))
+    return redirect(url_for('index'))
 
 def isLoggedIn():
         # Check if the access token is present and not expired

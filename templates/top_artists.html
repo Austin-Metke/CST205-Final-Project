@@ -9,9 +9,9 @@
 </head>
 <body>
     
-    {% for i in top_artists %}
+    {% for i, artist in top_artists %}
     <ul>
-       {{ i }}
+       {{ i }}. {{ artist }}
     </ul>
     {% endfor %}
 </body>
