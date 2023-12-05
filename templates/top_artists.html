@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <title>Top Artists</title>
-    
+
 </head>
 
 <header>
@@ -24,13 +24,19 @@
 
 <body>
 
-    <div>
-        {% for i, artist in top_artists %}
-        <ul>
-           <p class="default-text"> {{ i }}. {{ artist }}</p>
-        </ul>
-        {% endfor %}
+    <div class="flex-column">
+        <img src="{{top_artists[0]['images'][0]['url']}}" class="artist-image flex-column-item">
+        {% for artist_info in top_artists %}
+        <div class="flex-column-item default-text">
+            {{loop.index}}. <a href="{{artist_info['external_urls']['spotify']}}" class="default-text">{{artist_info['name']}} </a>
+        </div>
     </div>
+    {% endfor %}
+    </div>
+
+
+
+
 
     <div class="flex-row">
         <a class="btn flex-item default-text" href="{{ url_for('top_artists', time_range='short_term') }}">1 Month</a>

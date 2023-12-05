@@ -17,7 +17,7 @@ if __name__ == '__main__':
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SESSION_PERMANENT'] = True
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=1)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 Session(app)
 
 # Spotify API credentials
@@ -142,14 +142,16 @@ def view_playlists():
 def top_artists(time_range='medium_term'):
     if isLoggedIn():
         artists = get_artists(time_range)
-        return render_template('top_artists.html', top_artists=enumerate(artists, start=1), time_range=time_range)
+        return render_template('top_artists.html', top_artists=artists['items'], time_range=time_range)
     return redirect(url_for('index'))
 
 
 def get_artists(time_range='medium_term', limit=10):
     sp = Spotify(auth_manager=sp_oauth)
     results = sp.current_user_top_artists(time_range=time_range, limit=limit)
-    return [artist['name'] for artist in results['items']]
+    print(results)
+    return results
+
 
 def isLoggedIn():
         # Check if the access token is present and not expired
