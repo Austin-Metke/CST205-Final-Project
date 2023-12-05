@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
 </head>
+
 <body>
 
     <br>
@@ -17,13 +19,14 @@
     <h2>Your Playlists</h2>
     <ul>
         {% for playlist in playlists['items'] %}
-            <li>
-                {{ playlist['name'] }}
+        <li>
+            {{ playlist['name'] }}
 
-            </li>
+        </li>
         {% endfor %}
     </ul>
 
 
 </body>
+
 </html>

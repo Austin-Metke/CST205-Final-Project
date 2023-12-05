@@ -137,17 +137,19 @@ def view_playlists():
 
     return redirect(url_for('index'))
 
-@app.route('/top_artists')
-def top_artists():
+@app.route('/top_artists/', defaults={'time_range': 'medium_term'})
+@app.route('/top_artists/<time_range>')
+def top_artists(time_range='medium_term'):
     if isLoggedIn():
-        sp = Spotify(auth_manager=sp_oauth)
-
-        limit=10
-        time_range='medium_term'
-        results = sp.current_user_top_artists(time_range=time_range, limit=limit)
-        top_artists = [artist['name'] for artist in results['items']]
-        return render_template('top_artists.html', top_artists=enumerate(top_artists, start=1))
+        artists = get_artists(time_range)
+        return render_template('top_artists.html', top_artists=enumerate(artists, start=1))
     return redirect(url_for('index'))
+
+
+def get_artists(time_range='medium_term', limit=10):
+    sp = Spotify(auth_manager=sp_oauth)
+    results = sp.current_user_top_artists(time_range=time_range, limit=limit)
+    return [artist['name'] for artist in results['items']]
 
 def isLoggedIn():
         # Check if the access token is present and not expired

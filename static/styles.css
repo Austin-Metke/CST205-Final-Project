@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     height: 100vh;
     margin: 0;
     padding: 0;
@@ -7,7 +8,8 @@ html, body {
 body {
     font-family: Arial, sans-serif;
     background: linear-gradient(to bottom right, #3498db, #1DB954);
-    color: white; /* Text color on the gradient background */
+    color: white;
+    /* Text color on the gradient background */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -29,6 +31,12 @@ body {
     font-weight: bold;
     margin-top: 20px;
 
+}
+
+.default-text {
+    color: white;
+    font-weight: bold;
+    font-size: 36;
 }
 
 .flex-row {

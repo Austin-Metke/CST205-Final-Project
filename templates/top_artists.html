@@ -1,18 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <title>Document</title>
-</head>
-<body>
     
-    {% for i, artist in top_artists %}
-    <ul>
-       {{ i }}. {{ artist }}
-    </ul>
-    {% endfor %}
+</head>
+
+<header>
+    <h1>Your Top Artists</h1>
+</header>
+
+<body>
+
+    <div>
+        {% for i, artist in top_artists %}
+        <ul>
+           <p class="default-text"> {{ i }}. {{ artist }}</p>
+        </ul>
+        {% endfor %}
+    </div>
+
+    <div class="flex-row">
+        <a class="btn flex-item default-text" href="{{ url_for('top_artists', time_range='short_term') }}">1 Month</a>
+        <a class="btn flex-item default-text" href="{{ url_for('top_artists', time_range='medium_term') }}">6 Months</a>
+        <a class="btn flex-item default-text" href="{{ url_for('top_artists', time_range='long_term') }}">All Time</a>
+    </div>
+
 </body>
+
 </html>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,15 +12,15 @@
 
 <body>
 
-<header>
-    <h1>Welcome to the Spotify Playlist Creator!</h1>
-</header>
+    <header>
+        <h1>Welcome to the Spotify Playlist Creator!</h1>
+    </header>
     {% if user_info %}
-    <p style="color: white; font-weight: bold; font-size: 36;">Hello, {{ user_info['display_name'] }}!</p>
+    <p class="default-text">Hello, {{ user_info['display_name'] }}!</p>
 
-    <div style="display: flex; flex-direction: row; ">
-        <a class = "btn flex-item" href="{{ url_for('playlist_maker') }}">Create a playlist</a>
-        <a class = "btn flex-item" href="{{ url_for('view_playlists') }}">View playlists</a>
+    <div class="flex-row">
+        <a class="btn flex-item" href="{{ url_for('playlist_maker') }}">Create a playlist</a>
+        <a class="btn flex-item" href="{{ url_for('view_playlists') }}">View playlists</a>
 
     </div>
 
@@ -27,8 +28,9 @@
 
     <a class="btn" href="{{ url_for('login') }}">
         <img style="width: 52px; height: 77px" src="{{ url_for('static', filename='spotify.png' )}}" />
- <div style="width: 285px; height: 38px; text-align: center; color: white; font-size: 32px; font-weight: 700;">Login with Spotify</div>
-</a>
+        <div style="width: 285px; height: 38px; text-align: center; color: white; font-size: 32px; font-weight: 700;">
+            Login with Spotify</div>
+    </a>
 
     {% endif %}
 
@@ -36,4 +38,5 @@
     <a class="btn" href="{{ url_for('logout') }}">Logout</a>
     {% endif %}
 </body>
+
 </html>
