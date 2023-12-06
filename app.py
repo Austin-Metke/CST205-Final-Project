@@ -152,6 +152,22 @@ def get_artists(time_range='medium_term', limit=10):
     print(results)
     return results
 
+        
+@app.route('/top_tracks/', defaults={'time_range': 'medium_term'})
+@app.route('/top_tracks/<time_range>')
+def top_tracks(time_range='medium_term'):
+    if isLoggedIn():
+        artists = get_top_tracks(time_range)
+        return render_template('top_tracks.html', top_tracks=artists['items'], time_range=time_range)
+    return redirect(url_for('index'))
+
+
+def get_top_tracks(time_range='medium_term', limit=10):
+    sp = Spotify(auth_manager=sp_oauth)
+    results = sp.current_user_top_tracks(time_range=time_range, limit=limit)
+    print(results)
+    return results
+
 
 def isLoggedIn():
         # Check if the access token is present and not expired

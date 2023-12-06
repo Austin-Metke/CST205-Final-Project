@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Top Tracks</title>
+</head>
+<body>
+    
+    {% if time_range == 'short_term' %}
+    <h1>Your Top Tracks From The Past Month!</h1>
+    {% elif time_range == 'medium_term' %}
+    <h1>Your Top Tracks From the Past 6 Months!</h1>
+    {% else %}
+    <h1>Your Top Tracks From All Time!</h1>
+    {% endif %}
+
+    <div class="flex-column">
+        <img src="{{top_tracks[0]['album']['images'][0]['url']}}" class="artist-image flex-column-item">
+        {% for track_info in top_tracks %}
+        <div class="flex-column-item default-text">
+            {{loop.index}}. <a href="{{track_info['external_urls']['spotify']}}" class="default-text">{{track_info['name']}} - {{track_info['artists'][0]['name']}}</a>
+        </div>
+    </div>
+    {% endfor %}
+    </div>
+
+    <div class="flex-row">
+        <a class="btn flex-item default-text" href="{{ url_for('top_tracks', time_range='short_term') }}">1 Month</a>
+        <a class="btn flex-item default-text" href="{{ url_for('top_tracks', time_range='medium_term') }}">6 Months</a>
+        <a class="btn flex-item default-text" href="{{ url_for('top_tracks', time_range='long_term') }}">All Time</a>
+    </div>
+
+    <a class="btn" href="{{ url_for('index') }}">Back to Home</a>
+
+</body>
+</html>
