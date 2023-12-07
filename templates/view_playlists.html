@@ -15,15 +15,15 @@
 
 <body>
 
-    <h2>Your Public Playlists</h2>
-    <ul class="list-style">
+    <h1>Your Playlists!</h1>
+    <div class="list" style="overflow-y: auto;">
         {% for playlist in playlists['items'] %}
-            <li class="list-element">
+            <div class="list-element">
                 <img class="thumbnail"  src="{{ playlist.images[0].url }}" alt="Playlist Picture">
                 <a href="{{playlist['external_urls']['spotify']}}" class="default-text"> {{ playlist['name'] }}</a>
-            </li>
+            </div>
         {% endfor %}
-    </ul>
+        </div>
 
     <a class="btn" href="{{ url_for('index') }}">Back to Home</a>
 
