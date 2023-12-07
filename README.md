@@ -19,7 +19,7 @@ Open the `app.py` file. Follow these steps to configure your application with th
 1. Install the necessary libraries if you haven't already:
 
    ```bash
-   pip install spotipy flask flask-wtf flask-session bootstrap-flask
+   pip install Flask Flask-WTF Flask-Session wtforms spotipy
    ```
 
 2. Place your spoitfy app credentials at the top of the app.py file:
