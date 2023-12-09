@@ -2,6 +2,7 @@
 from flask import Flask, redirect, request, session, url_for, render_template
 from flask_wtf import FlaskForm
 from flask_session import Session
+from flask_caching import Cache
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from spotipy import Spotify, util
@@ -19,6 +20,11 @@ app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SESSION_PERMANENT'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 Session(app)
+# Cache to prevent unnecessary API calls upon refresh
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
+# How long to store the cached data in seconds
+cache_timout = 60
 
 # Spotify API credentials
 SPOTIPY_CLIENT_ID = 'a3d1083e96f6486b914825dd793e7b0a'
@@ -139,12 +145,14 @@ def view_playlists():
 
 @app.route('/top_artists/', defaults={'time_range': 'medium_term', 'limit': 10})
 @app.route('/top_artists/<time_range>/<int:limit>', methods=['GET'])
+@cache.memoize(timeout=cache_timout)
 def top_artists(time_range='medium_term', limit=10):
     if isLoggedIn():
         artists = get_artists(time_range, limit)
         return render_template('top_artists.html', top_artists=artists['items'], time_range=time_range, limit=limit if limit < artists['total'] else artists['total'])
     return redirect(url_for('index'))
 
+@cache.memoize(timeout=cache_timout)
 def get_artists(time_range='medium_term', limit=10):
     sp = Spotify(auth_manager=sp_oauth)
     results = sp.current_user_top_artists(time_range=time_range, limit=limit)
@@ -153,13 +161,14 @@ def get_artists(time_range='medium_term', limit=10):
         
 @app.route('/top_tracks/', defaults={'time_range': 'medium_term', 'limit': 10})
 @app.route('/top_tracks/<time_range>/<int:limit>', methods=['GET'])
+@cache.memoize(timeout=cache_timout)
 def top_tracks(time_range='medium_term', limit=10):
     if isLoggedIn():
         artists = get_top_tracks(time_range, limit)
         return render_template('top_tracks.html', top_tracks=artists['items'], time_range=time_range, limit=limit if limit < artists['total'] else artists['total'])
     return redirect(url_for('index'))
 
-
+@cache.memoize(timeout=cache_timout)
 def get_top_tracks(time_range='medium_term', limit=10):
     sp = Spotify(auth_manager=sp_oauth)
     results = sp.current_user_top_tracks(time_range=time_range, limit=limit)
