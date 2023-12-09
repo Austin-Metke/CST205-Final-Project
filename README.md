@@ -39,7 +39,8 @@ Open the `app.py` file. Follow these steps to configure your application with th
    ```bash
     ./run
    ```
-  For windows you'll have to run the following command:
+   
+  Alternatively you can run the command below regardless of OS:
   
   ```bash
   flask --app app.py run --debug
