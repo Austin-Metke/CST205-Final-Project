@@ -76,8 +76,8 @@ def logout():
     # Remove the stored token info from the session
     session.clear()
 
-    return redirect(url_for('index'))
-
+    # Redirect is handled in JavaScript
+    return
 @app.route('/add_song/<playlist_id>', methods=['GET', 'POST'])
 def add_song(playlist_id):
     form = AddSongForm()
@@ -117,7 +117,7 @@ def create_playlist():
 
 @app.route('/playlist_maker')
 def playlist_maker():
-    if(isLoggedIn):
+    if(isLoggedIn()):
         return render_template('create_playlist.html')
 
 @app.route('/view_playlists')
