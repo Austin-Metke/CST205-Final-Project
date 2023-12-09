@@ -21,9 +21,6 @@
     {% endif %}
 
 
-
-
-
     <div class="flex-column" style="overflow-y: auto;">
         <img src="{{top_tracks[0]['album']['images'][0]['url']}}" class="artist-image flex-column-item">
         {% for track_info in top_tracks %}
@@ -34,6 +31,13 @@
         </div>
         {% endfor %}
     </div>
+
+
+    <form action="{{ url_for('create_playlist') }}" method="post" target="_blank">
+        <input type="hidden" name="time_range" value="{{ time_range }}">
+        <input type="hidden" name="limit" value="{{ limit }}">
+        <button type="submit" class="btn btn-primary", >Create Playlist</button>
+    </form>
 
 
     <div class="flex-row">
