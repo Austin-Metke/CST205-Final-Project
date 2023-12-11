@@ -20,6 +20,12 @@ app = Flask(__name__)
 if __name__ == '__main__':
     app.run(debug=True)
 
+
+# Spotify API credentials
+SPOTIPY_CLIENT_ID = 'a3d1083e96f6486b914825dd793e7b0a'
+SPOTIPY_CLIENT_SECRET = 'cea29e8759f64f238e82e1d2b266f64e'
+SPOTIPY_REDIRECT_URI = 'http://localhost:5000/callback'
+
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['SESSION_PERMANENT'] = True
@@ -31,10 +37,6 @@ cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 # How long to store cached data in seconds
 cache_timout = 60
 
-# Spotify API credentials
-SPOTIPY_CLIENT_ID = 'a3d1083e96f6486b914825dd793e7b0a'
-SPOTIPY_CLIENT_SECRET = 'cea29e8759f64f238e82e1d2b266f64e'
-SPOTIPY_REDIRECT_URI = 'http://localhost:5000/callback'
 
 # Spotify API scope for playlist creation
 SPOTIPY_SCOPE = 'playlist-modify-public playlist-modify-private user-library-read user-top-read playlist-read-private playlist-read-collaborative'

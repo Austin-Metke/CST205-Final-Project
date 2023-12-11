@@ -1,9 +1,29 @@
-# CST205-Final-Project Setup Guide
+# Spotify Playlist Creator Setup Guide
+
+<div style="display: flex;">
+<a href="https://github.com/Austin-Metke/CST205-Final-Project">
+  <img align="center" src="https://img.shields.io/badge/Project Reposotory-grey?style=flat-square&logo=github&logoColor=white&link=github.com/Austin-Metke/CST205-Final-Project" style="margin-right: 10px;"/>
+  </a>
+
+  <a href="https://trello.com/b/3WILazhQ/cst-205-team-9477">
+  <img align="center" src="https://img.shields.io/badge/Project%20Board-white?style=flat-square&logo=trello&logoColor=blue">
+  </a>
+  </div>
+
+#### Authors: 
+* **Austin Metke**
+* **Mackinzie Woodward**
+* **Keith Ruxton**
+* **Gabe Myers**
+#### Class: CST-205
+#### Date: 12/11/23
+#### 
+
+This guide will walk you through the process of creating a Spotify Developer App and obtaining the necessary credentials (Client ID and Client Secret) in order to use this app.
+
 <div align="center">
   <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGpwbWpjMzJjdXlvcnBsdG10eTl4c2FmMThoMW8zbWZkdmFwcDRjcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LX8ZkoLXonTzR2YExC/giphy.gif" alt="Animated GIF">
 </div>
-
-This guide will walk you through the process of creating a Spotify Developer App and obtaining the necessary credentials (Client ID and Client Secret) in order to use this app.
 
 ## Step 1: Create a Spotify Developer Account
 
