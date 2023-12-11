@@ -21,13 +21,13 @@
     {% endif %}
 
 
-    <div class="flex-column" style="overflow-y: auto;">
-        <img src="{{top_tracks[0]['album']['images'][0]['url']}}" class="artist-image flex-column-item">
+    <div class="flex-column" style="overflow-y: auto; overflow-x: visible;">
         {% for track_info in top_tracks %}
         <div class="flex-column-item default-text">
             {{loop.index}}. <a href="{{track_info['external_urls']['spotify']}}"
                 class="default-text">{{track_info['name']}}
                 - {{track_info['artists'][0]['name']}}</a>
+            <img src="{{track_info['album']['images'][0]['url']}}" class="artist-image flex-column-item">
         </div>
         {% endfor %}
     </div>
@@ -36,7 +36,7 @@
     <form action="{{ url_for('create_playlist') }}" method="post" target="_blank">
         <input type="hidden" name="time_range" value="{{ time_range }}">
         <input type="hidden" name="limit" value="{{ limit }}">
-        <button type="submit" class="btn btn-primary", >Create Playlist</button>
+        <button type="submit" class="btn btn-primary" ,>Create Playlist</button>
     </form>
 
 
