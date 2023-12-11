@@ -10,10 +10,10 @@
 </div>
 
 #### Authors: 
-* **Austin Metke**
-* **Mackinzie Woodward**
-* **Keith Ruxton**
-* **Gabe Myers**
+* [**Austin Metke**](https://github.com/Austin-Metke)
+* [**Mackinzie Woodward**](https://github.com/kinziegrace4)
+* [**Keith Ruxton**](https://github.com/keith-ruxton)
+* [**Gabe Myers**](https://github.com/gabethemyers)
 #### Class: CST-205
 #### Date: 12/11/23
 #### 
