@@ -25,15 +25,20 @@
 </header>
 
 <body>
-    <div class="flex-column" style="overflow-y: auto;">
+
+
+    <div class="list" style="overflow-y: auto;">
         {% for artist_info in top_artists %}
-        <div class="flex-column-item">
-            {{loop.index}}. <a href="{{artist_info['external_urls']['spotify']}}"
-                class="default-text">{{artist_info['name']}} </a>
-            <img src="{{artist_info['images'][0]['url']}}" class="artist-image flex-column-item"
-                style="align-self: center;">
+        <div class="list-element">
+            <div class="flex-row">
+                <img class="artist-image flex-item" src="{{artist_info['images'][0]['url']}}" alt="Artist Picture">
+                <a href="{{artist_info['external_urls']['spotify']}}" class="default-text flex-item">{{loop.index}}.
+                    {{artist_info['name']}} </a>
+            </div>
+
         </div>
         {% endfor %}
+
     </div>
 
     <div class="btn-group" role="group">

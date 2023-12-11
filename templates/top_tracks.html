@@ -21,13 +21,15 @@
     {% endif %}
 
 
-    <div class="flex-column" style="overflow-y: auto; overflow-x: visible;">
+    <div class="list" style="overflow-y: auto;">
         {% for track_info in top_tracks %}
-        <div class="flex-column-item default-text">
-            {{loop.index}}. <a href="{{track_info['external_urls']['spotify']}}"
-                class="default-text">{{track_info['name']}}
-                - {{track_info['artists'][0]['name']}}</a>
-            <img src="{{track_info['album']['images'][0]['url']}}" class="artist-image flex-column-item">
+        <div class="list-element">
+            <div class="flex-row">
+                <img src="{{track_info['album']['images'][0]['url']}}" class="artist-image flex-item">
+                <a href="{{track_info['external_urls']['spotify']}}" class="default-text flex-item">{{loop.index}}.
+                    {{track_info['name']}}
+                    - {{track_info['artists'][0]['name']}}</a>
+            </div>
         </div>
         {% endfor %}
     </div>
