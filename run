@@ -2,4 +2,4 @@
 
 file_name="app.py"
 
-flask --app $file_name run --debug
+flask --app $file_name run --debug -p 5000

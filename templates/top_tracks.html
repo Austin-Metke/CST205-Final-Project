@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!--Author: Austin Metke
+    Contributors: Gabe Myers
+-->
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +16,7 @@
 
 <body>
 
+    <!-- Changes the Title at the top of the page depending on time range -->
     {% if time_range == 'short_term' %}
     <h1>Your Top {{limit}} Tracks From The Past Month!</h1>
     {% elif time_range == 'medium_term' %}
@@ -21,18 +26,21 @@
     {% endif %}
 
 
-    <div class="flex-column" style="overflow-y: auto; overflow-x: visible;">
+    <div class="list" style="overflow-y: auto;">
         {% for track_info in top_tracks %}
-        <div class="flex-column-item default-text">
-            {{loop.index}}. <a href="{{track_info['external_urls']['spotify']}}"
-                class="default-text">{{track_info['name']}}
-                - {{track_info['artists'][0]['name']}}</a>
-            <img src="{{track_info['album']['images'][0]['url']}}" class="artist-image flex-column-item">
+        <div class="list-element">
+            <div class="flex-row">
+                <img src="{{track_info['album']['images'][0]['url']}}" class="artist-image flex-item">
+                <a href="{{track_info['external_urls']['spotify']}}" class="default-text flex-item">{{loop.index}}.
+                    {{track_info['name']}}
+                    - {{track_info['artists'][0]['name']}}</a>
+            </div>
         </div>
         {% endfor %}
     </div>
 
 
+    <!-- Setting target to "_blank allows a blank new page to be opened, which is then redirected to the newly created playlist"-->
     <form action="{{ url_for('create_playlist') }}" method="post" target="_blank">
         <input type="hidden" name="time_range" value="{{ time_range }}">
         <input type="hidden" name="limit" value="{{ limit }}">

@@ -1,3 +1,8 @@
+
+/*
+    Authors: Austin Metke, Mackinzie Woodward
+    Contributions: Gabe Myers
+*/
 html,
 body {
     height: 100vh;
@@ -70,15 +75,19 @@ body {
     width: 50px;
     height: 50px;
 }
+
 .image-container {
-    height: 120px; /* Set your desired height */
+    height: 120px;
+    /* Set your desired height */
 }
+
 .number {
     vertical-align: middle;
 }
 
 .flex-container {
-    max-height: 400px; /* Adjust the height as needed */
+    max-height: 400px;
+    /* Adjust the height as needed */
     overflow-y: auto;
 }
 

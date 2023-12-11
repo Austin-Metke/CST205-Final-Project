@@ -9,6 +9,12 @@ from spotipy.oauth2 import SpotifyOAuth
 from datetime import timedelta
 import os, requests
 
+"""
+Course: CST-205
+Instructor: Avner
+Authors: Austin Metke, Mackinzie Woodward, Keith Ruxton, Gabe Myers
+"""
+
 app = Flask(__name__)
 
 if __name__ == '__main__':
@@ -48,7 +54,6 @@ class AddSongForm(FlaskForm):
 def index():
     # Grab user_info from session if present
     user_info = session['user_info'] if 'user_info' in session else None
-    print(user_info)
     #Check if user is logged in to get user_info
     if isLoggedIn() and user_info is None:
         token_info = session['token_info']
@@ -66,15 +71,16 @@ def login():
         # user is not authenticated, initiate Spotify login process
         return redirect(sp_oauth.get_authorize_url())
 
+# This route is called on spotifys servers after user login
 @app.route('/callback')
 def callback():
     token_info = sp_oauth.get_access_token(request.args['code'])
     session['token_info'] = token_info
     return redirect(url_for('index'))
 
+# See the <script> tag at the bottom of index.html to see how JS handles logout
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
-
     # Revoke the access token on Spotify's side
     token = session['token_info']['access_token']
     revoke_url = 'https://accounts.spotify.com/api/token/revoke'
@@ -89,42 +95,22 @@ def logout():
 @app.route('/add_song/<playlist_id>', methods=['GET', 'POST'])
 def add_song(playlist_id):
     form = AddSongForm()
-
     if form.validate_on_submit():
         token_info = session.get('token_info', None)
 
         if token_info:
             sp = Spotify(auth=token_info['access_token'])
             track_uri = form.track_uri.data
-
             # Add the song to the playlist
             sp.playlist_add_items(playlist_id, [track_uri])
 
     return redirect(url_for('view_playlist', playlist_id=playlist_id))
 
-# def create_playlist():
-#     form = CreatePlaylistForm()
-
-#     if form.validate_on_submit():
-#         # Retrieve access token from the session
-#         token_info = session.get('token_info', None)
-
-#         if token_info:
-#             sp = Spotify(auth=token_info['access_token'])
-#             user_info = sp.me()
-
-#             # Create a new playlist
-#             playlist_name = form.playlist_name.data
-#             playlist = sp.user_playlist_create(user_info['id'], playlist_name)
-
-#             return redirect(url_for('view_playlists'))
-
-#     return render_template('create_playlist.html', form=form)
 
 @app.route('/playlist_maker')
 def playlist_maker():
     if(isLoggedIn()):
-        return render_template('create_playlist.html')
+        return render_template('playlist_maker.html')
 
 @app.route('/view_playlists')
 @cache.memoize(timeout=cache_timout)
@@ -142,12 +128,18 @@ def view_playlists():
         return render_template('view_playlists.html', playlists=playlists)
     return redirect(url_for('index'))
 
+
+# Lots of decorators, @cache.memoize caches data on the page to prevent unnecessary API calls
+# The two separate route decorators allow us to send data from the webpage to change the limit and time_range
 @app.route('/top_artists/', defaults={'time_range': 'medium_term', 'limit': 10})
 @app.route('/top_artists/<time_range>/<int:limit>', methods=['GET'])
 @cache.memoize(timeout=cache_timout)
 def top_artists(time_range='medium_term', limit=10):
     if isLoggedIn():
         artists = get_artists(time_range, limit)
+        # Same reason as the top_tracks route,
+        # It's possible for there to be less artists than the given limit
+        # If there are less artists than the given limit, the new limit is the amount of artists
         return render_template('top_artists.html', top_artists=artists['items'], time_range=time_range, limit=limit if limit < artists['total'] else artists['total'])
     return redirect(url_for('index'))
 
@@ -162,8 +154,11 @@ def get_artists(time_range='medium_term', limit=10):
 @cache.memoize(timeout=cache_timout)
 def top_tracks(time_range='medium_term', limit=10):
     if isLoggedIn():
-        artists = get_top_tracks(time_range, limit)
-        return render_template('top_tracks.html', top_tracks=artists['items'], time_range=time_range, limit=limit if limit < artists['total'] else artists['total'])
+        top_tracks = get_top_tracks(time_range, limit)
+        # I'm checking if the limit is less than the amount of total artsts,
+        # as it is possible for spotify to procure less than 50 top tracks,
+        # If the total artists is less than the limit the new limit becomes the amount of artists
+        return render_template('top_tracks.html', top_tracks=top_tracks['items'], time_range=time_range, limit=limit if limit < top_tracks['total'] else top_tracks['total'])
     return redirect(url_for('index'))
 
 @cache.memoize(timeout=cache_timout)
@@ -172,7 +167,8 @@ def get_top_tracks(time_range='medium_term', limit=10):
     results = sp.current_user_top_tracks(time_range=time_range, limit=limit)
     return results
 
-
+# Only called on the top_tracks.html page to generate a playlist of the top tracks in the given time_frame and limit
+# Inspiration from: https://github.com/spotipy-dev/spotipy/blob/master/examples/my_top_tracks.py
 @app.route('/create_playlist', methods=['POST'])
 def create_playlist():
     if isLoggedIn():
@@ -187,20 +183,21 @@ def create_playlist():
         top_tracks = get_top_tracks(time_range, limit)
         track_uris = [track['uri'] for track in top_tracks['items']]
 
-        formatted_time_range = None
-        if time_range == 'short_term':
-            formatted_time_range = 'Month'
-        elif time_range == 'medium_term':
-            formatted_time_range = '6 Months'
-        elif time_range == 'long_term':
-            formatted_time_range = 'All Time'
+        time_range_mapping = {
+            'short_term': 'Past Month',
+            'medium_term': 'Past 6 Months',
+            'long_term': 'All Time'
+        }
 
-        playlist_name = f'My Top {limit} Tracks From Past {formatted_time_range}'
+        formatted_time_range = time_range_mapping.get(time_range, 'Unknown Time Range')
+
+        playlist_name = f'My Top {limit} Tracks From {formatted_time_range}'
+
         playlist = sp.user_playlist_create(session['user_info']['id'], playlist_name, public=False, description='Autogenerated by Spotify Playlist Creator')
         sp.playlist_add_items(playlist['id'], track_uris)
-        print(playlist)
         return redirect(playlist['external_urls']['spotify'])
     return redirect(url_for('index'))
+
+# Check if the access token is present and not expired
 def isLoggedIn():
-    # Check if the access token is present and not expired
     return 'token_info' in session and not sp_oauth.is_token_expired(session['token_info'])
