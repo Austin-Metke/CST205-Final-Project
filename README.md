@@ -40,7 +40,7 @@
    ```
 ## Step 2: Configure Python Application
 
-Open the `app.py` file. Follow these steps to configure your application with the Spotify credentials:
+Open the `app.py` file. Follow these steps to configure the application with your Spotify credentials:
 
 1. Install the necessary libraries if you haven't already:
 
