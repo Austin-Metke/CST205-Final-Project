@@ -8,7 +8,7 @@ from spotipy import Spotify, util
 from spotipy.oauth2 import SpotifyOAuth
 from datetime import timedelta
 import os, requests
-
+import config
 """
 Course: CST-205
 Instructor: Avner
@@ -20,10 +20,9 @@ app = Flask(__name__)
 if __name__ == '__main__':
     app.run(debug=True)
 
-
 # Spotify API credentials
-SPOTIPY_CLIENT_ID = 'a3d1083e96f6486b914825dd793e7b0a'
-SPOTIPY_CLIENT_SECRET = 'cea29e8759f64f238e82e1d2b266f64e'
+SPOTIPY_CLIENT_ID = config.SPOTIPY_CLIENT_ID
+SPOTIPY_CLIENT_SECRET = config.SPOTIPY_CLIENT_SECRET
 SPOTIPY_REDIRECT_URI = 'http://localhost:5000/callback'
 
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -36,7 +35,6 @@ cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
 # How long to store cached data in seconds
 cache_timout = 60
-
 
 # Spotify API scope for playlist creation
 SPOTIPY_SCOPE = 'playlist-modify-public playlist-modify-private user-library-read user-top-read playlist-read-private playlist-read-collaborative'

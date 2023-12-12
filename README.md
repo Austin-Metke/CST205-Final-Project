@@ -40,7 +40,7 @@
    ```
 ## Step 2: Configure Python Application
 
-Open the `app.py` file. Follow these steps to configure the application with your Spotify credentials:
+Open the `config.py` file. Follow these steps to configure the application with your Spotify credentials:
 
 1. Install the necessary libraries if you haven't already:
 
@@ -48,7 +48,7 @@ Open the `app.py` file. Follow these steps to configure the application with you
    pip install Flask Flask-WTF Flask-Session Flask-Caching wtforms spotipy
    ```
 
-2. Place your spoitfy app credentials at the top of the app.py file:
+2. Place your spoitfy app credentials at the top of the config.py file:
 
    ```python
    SPOTIPY_CLIENT_ID = 'your_client_id'
