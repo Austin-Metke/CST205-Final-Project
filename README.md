@@ -21,7 +21,7 @@
  #### This guide will walk you through the process of creating a Spotify Developer App and obtaining the necessary credentials (Client ID and Client Secret) in order to use this app.
 ---
 <div align="center">
-  <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGpwbWpjMzJjdXlvcnBsdG10eTl4c2FmMThoMW8zbWZkdmFwcDRjcyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LX8ZkoLXonTzR2YExC/giphy.gif" alt="Animated GIF">
+    <a href="#"><img alt="Screenshot" src="screenshots/screencap.gif"></a>
 </div>
 
 ## Step 1: Create a Spotify Developer Account
