@@ -146,7 +146,7 @@ def playlist_maker():
                 playlist_image = form.playlist_image.data
 
                 # Create the playlist
-                playlist = sp.user_playlist_create(sp.current_user()['id'], playlist_name)
+                playlist = sp.user_playlist_create(session['user_info']['id'], playlist_name)
 
                 # Upload playlist image
                 if playlist_image:
