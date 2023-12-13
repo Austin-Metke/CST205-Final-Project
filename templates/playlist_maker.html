@@ -12,11 +12,35 @@
     <title>Playlist Maker</title>
 </head>
 
+
+<title>Playlist Maker</title>
+</head>
+
 <body>
 
     <div class="mb-1">
-        <label for="formGroupExampleInput" class="form-label">Playlist Title</label>
-        <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Playlist Title">
+        <h2>Create New Playlist</h2>
+        <form method="POST" action="{{ url_for('playlist_maker') }}" enctype="multipart/form-data">
+            {{ form.csrf_token }}
+
+            <label for="playlist_name" class="form-label">Pick a name for your new playlist!</label>
+            <input type="text" class="form-control" id="playlist_name" name="playlist_name" placeholder="Enter a Name">
+
+            <label for="playlist_image" class="form-label">Upload a playlist image (optional)</label>
+            <input type="file" class="form-control" id="playlist_image" name="playlist_image" accept="image/*">
+            <button type="submit" class="btn btn-primary mt-3">Create Playlist</button>
+
+
+        </form>
+
+        {% if redirect_to_view %}
+            <script>
+                window.location.href = "{{ url_for('view_new_playlists') }}";
+            </script>
+        {% endif %}
+
+        <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Back to Home</a>
+
     </div>
 
 </body>

@@ -2,10 +2,12 @@ from flask import Flask, redirect, request, session, url_for, render_template
 from flask_wtf import FlaskForm
 from flask_session import Session
 from flask_caching import Cache
-from wtforms import StringField, SubmitField
+from wtforms import StringField, SubmitField, FileField
+from flask_wtf.file import FileAllowed
 from wtforms.validators import DataRequired
 from spotipy import Spotify, util
 from spotipy.oauth2 import SpotifyOAuth
+from werkzeug.utils import secure_filename
 from datetime import timedelta
 import os, requests
 import config
@@ -42,13 +44,26 @@ SPOTIPY_SCOPE = 'playlist-modify-public playlist-modify-private user-library-rea
 # Spotipy OAuth handler
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SPOTIPY_SCOPE)
 
+# Allow user to upload playlist cover photo
+app.config['UPLOAD_FOLDER'] = 'CST205-Final-Project/static/playlist_covers'
+# https://claireyoshioka.myportfolio.com/spotify-playlist-covers
+ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif', 'heic'}
 class CreatePlaylistForm(FlaskForm):
     playlist_name = StringField('Playlist Name', validators=[DataRequired()])
+    # Allows user to add photo cover to playlist
+    playlist_image = FileField('Playlist Image', validators=[FileAllowed(ALLOWED_EXTENSIONS, 'Images only.')])
     submit = SubmitField('Create Playlist')
+
+# Search for songs to add to newly created playlist, not yet working
+class SongSearchForm(FlaskForm):
+    search_query = StringField('Search for Song or Artist', validators=[DataRequired()])
+    submit = SubmitField('Search')
 
 class AddSongForm(FlaskForm):
     track_uri = StringField('Spotify Track URI', validators=[DataRequired()])
     submit = SubmitField('Add Song')
+
+
 
 @app.route('/')
 def index():
@@ -108,13 +123,77 @@ def add_song(playlist_id):
             # Add the song to the playlist
             sp.playlist_add_items(playlist_id, [track_uri])
 
-    return redirect(url_for('view_playlist', playlist_id=playlist_id))
+    return redirect(url_for('view_playlists', playlist_id=playlist_id))
 
-
-@app.route('/playlist_maker')
+@app.route('/playlist_maker', methods=['GET', 'POST'])
 def playlist_maker():
-    if(isLoggedIn()):
-        return render_template('playlist_maker.html')
+    if isLoggedIn():
+        form = CreatePlaylistForm()
+
+        if form.validate_on_submit():
+            token_info = session.get('token_info', None)
+
+            if token_info:
+                sp = Spotify(auth=token_info['access_token'])
+
+                # Refresh the token if it's expired
+                if sp_oauth.is_token_expired(token_info):
+                    token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+                    session['token_info'] = token_info
+                    sp = Spotify(auth=token_info['access_token'])
+
+                playlist_name = form.playlist_name.data
+                playlist_image = form.playlist_image.data
+
+                # Create the playlist
+                playlist = sp.user_playlist_create(sp.current_user()['id'], playlist_name)
+
+                # Upload playlist image
+                if playlist_image:
+                    filename = secure_filename(playlist_image.filename)
+                    playlist_image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+                    # Ensure the folder exists
+                    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                        os.makedirs(app.config['UPLOAD_FOLDER'])
+
+                    playlist_image.save(playlist_image_path)
+
+                    # Set playlist cover image using Spotify API
+                    with open(playlist_image_path, 'rb') as image_file:
+                        sp.playlist_upload_cover_image(playlist['id'], image_file.read())
+
+                    # Remove the uploaded image file
+                    os.remove(playlist_image_path)
+
+                # Redirect to view the newly created playlist
+                return redirect(url_for('view_new_playlists'))
+
+        return render_template('playlist_maker.html', form=form)
+
+
+
+# Views newly created playlist instead of all current playlists
+@app.route('/view_new_playlists', methods=['GET', 'POST'])
+def view_new_playlists():
+    token_info = session.get('token_info', None)
+
+    if isLoggedIn():
+        sp = Spotify(auth=token_info['access_token'])
+
+        playlists = sp.current_user_playlists()['items']
+
+        form = AddSongForm()
+
+
+        if request.method == 'POST' and form.validate_on_submit():
+            track_uri = form.track_uri.data
+            selected_playlist_id = request.form.get('playlist_id')
+
+            if selected_playlist_id:
+                sp.playlist_add_items(selected_playlist_id, [track_uri])
+
+        return render_template('view_new_playlists.html', playlists=playlists, form=form)
 
 @app.route('/view_playlists')
 @cache.memoize(timeout=cache_timout)
@@ -131,7 +210,6 @@ def view_playlists():
         playlists = sp.current_user_playlists()
         return render_template('view_playlists.html', playlists=playlists)
     return redirect(url_for('index'))
-
 
 # Lots of decorators, @cache.memoize caches data on the page to prevent unnecessary API calls
 # The two separate route decorators allow us to send data from the webpage to change the limit and time_range

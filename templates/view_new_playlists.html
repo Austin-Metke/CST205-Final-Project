@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Playlist Maker</title>
+</head>
+
+
+<title>Playlist Maker</title>
+</head>
+
+<body>
+<div class="container">
+    <h2>New Playlists</h2>
+    <a href="{{ url_for('index') }}" class="btn btn-primary mt-3">Back to Home</a>
+    <a href="{{ url_for('playlist_maker') }}" class="btn btn-primary mb-3">Create New Playlist</a>
+    {% if playlists %}
+        <ul class="list-group">
+            {% for playlist in playlists %}
+                <li class="list-group-item">
+                    <a href="{{ url_for('view_new_playlists') }}">{{ playlist.name }}</a>
+
+                    <form method="POST" action="{{ url_for('view_new_playlists') }}">
+                        {{ form.csrf_token }}
+                        {{ form.hidden_tag() }}
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" placeholder="Spotify Track URI" name="track_uri">
+                            <input type="hidden" name="playlist_id" value="{{ playlist.id }}">
+                            <button type="submit" class="btn btn-primary">Add Song</button>
+                        </div>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No new playlists available.</p>
+    {% endif %}
+
+</div>
+
+</body>
+
+</html>
