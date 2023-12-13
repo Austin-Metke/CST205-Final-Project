@@ -1,4 +1,4 @@
-# Spotify Playlist Creator Setup Guide
+# Seekify Setup Guide
 
 <div>
   <a href="https://github.com/Austin-Metke/CST205-Final-Project" style="text-decoration: none;">
@@ -18,7 +18,7 @@
 #### Date: 12/11/23
 #### 
 
- #### This guide will walk you through the process of creating a Spotify Developer App and obtaining the necessary credentials (Client ID and Client Secret) in order to use this app.
+ #### This guide will walk you through the process of creating a Spotify Developer App and obtaining the necessary credentials (Client ID and Client Secret) in order to use Seekify.
 ---
 <div align="center">
     <a href="#"><img alt="Screenshot" src="screenshots/screencap.gif"></a>

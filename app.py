@@ -53,13 +53,16 @@ class AddSongForm(FlaskForm):
 @app.route('/')
 def index():
     # Grab user_info from session if present
-    user_info = session['user_info'] if 'user_info' in session else None
-    #Check if user is logged in to get user_info
+    user_info = session.get('user_info', None)
+
+    # Check if user is logged in to get user_info
     if isLoggedIn() and user_info is None:
-        token_info = session['token_info']
-        sp = Spotify(auth=token_info['access_token'])
-        user_info = sp.me()
-        session['user_info'] = user_info
+        token_info = session.get('token_info', None)
+        if token_info:
+            sp = Spotify(auth=token_info['access_token'])
+            user_info = sp.me()
+            session['user_info'] = user_info
+
     return render_template('index.html', user_info=user_info)
 
 @app.route('/login')
@@ -69,6 +72,7 @@ def login():
         return redirect(url_for('index'))
     else:
         # user is not authenticated, initiate Spotify login process
+        session.clear()
         return redirect(sp_oauth.get_authorize_url())
 
 # This route is called on spotifys servers after user login
