@@ -136,12 +136,6 @@ def playlist_maker():
             if token_info:
                 sp = Spotify(auth=token_info['access_token'])
 
-                # Refresh the token if it's expired
-                if sp_oauth.is_token_expired(token_info):
-                    token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
-                    session['token_info'] = token_info
-                    sp = Spotify(auth=token_info['access_token'])
-
                 playlist_name = form.playlist_name.data
                 playlist_image = form.playlist_image.data
 
@@ -170,6 +164,7 @@ def playlist_maker():
                 return redirect(url_for('view_new_playlists'))
 
         return render_template('playlist_maker.html', form=form)
+    return redirect(url_for('index'))
 
 
 
@@ -184,7 +179,6 @@ def view_new_playlists():
         playlists = sp.current_user_playlists()['items']
 
         form = AddSongForm()
-
 
         if request.method == 'POST' and form.validate_on_submit():
             track_uri = form.track_uri.data
