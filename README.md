@@ -1,3 +1,9 @@
+<div align="center">
+<a href="#">
+<img src="static/seekify_logo.png" height=200 width=200>
+</a>
+</div>
+
 # Seekify Setup Guide
 
 <div>
