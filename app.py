@@ -42,13 +42,13 @@ SPOTIPY_SCOPE = 'playlist-modify-public playlist-modify-private user-library-rea
 # Spotipy OAuth handler
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SPOTIPY_SCOPE)
 
-class CreatePlaylistForm(FlaskForm):
-    playlist_name = StringField('Playlist Name', validators=[DataRequired()])
-    submit = SubmitField('Create Playlist')
+# class CreatePlaylistForm(FlaskForm):
+#     playlist_name = StringField('Playlist Name', validators=[DataRequired()])
+#     submit = SubmitField('Create Playlist')
 
-class AddSongForm(FlaskForm):
-    track_uri = StringField('Spotify Track URI', validators=[DataRequired()])
-    submit = SubmitField('Add Song')
+# class AddSongForm(FlaskForm):
+#     track_uri = StringField('Spotify Track URI', validators=[DataRequired()])
+#     submit = SubmitField('Add Song')
 
 @app.route('/')
 def index():
@@ -96,25 +96,25 @@ def logout():
 
     return redirect(url_for('index'))
 
-@app.route('/add_song/<playlist_id>', methods=['GET', 'POST'])
-def add_song(playlist_id):
-    form = AddSongForm()
-    if form.validate_on_submit():
-        token_info = session.get('token_info', None)
+# @app.route('/add_song/<playlist_id>', methods=['GET', 'POST'])
+# def add_song(playlist_id):
+#     form = AddSongForm()
+#     if form.validate_on_submit():
+#         token_info = session.get('token_info', None)
 
-        if token_info:
-            sp = Spotify(auth=token_info['access_token'])
-            track_uri = form.track_uri.data
-            # Add the song to the playlist
-            sp.playlist_add_items(playlist_id, [track_uri])
+#         if token_info:
+#             sp = Spotify(auth=token_info['access_token'])
+#             track_uri = form.track_uri.data
+#             # Add the song to the playlist
+#             sp.playlist_add_items(playlist_id, [track_uri])
 
-    return redirect(url_for('view_playlist', playlist_id=playlist_id))
+#     return redirect(url_for('view_playlist', playlist_id=playlist_id))
 
 
-@app.route('/playlist_maker')
-def playlist_maker():
-    if(isLoggedIn()):
-        return render_template('playlist_maker.html')
+# @app.route('/playlist_maker')
+# def playlist_maker():
+#     if(isLoggedIn()):
+#         return render_template('playlist_maker.html')
 
 @app.route('/view_playlists')
 @cache.memoize(timeout=cache_timout)
