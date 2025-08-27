@@ -7,6 +7,7 @@ from wtforms.validators import DataRequired
 from spotipy import Spotify, util
 from spotipy.oauth2 import SpotifyOAuth
 from datetime import timedelta
+from functools import wraps
 import os, requests
 import config
 """
@@ -41,6 +42,46 @@ SPOTIPY_SCOPE = 'playlist-modify-public playlist-modify-private user-library-rea
 
 # Spotipy OAuth handler
 sp_oauth = SpotifyOAuth(SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, scope=SPOTIPY_SCOPE)
+
+# Helper function to get the current user ID from session
+def get_current_user_id():
+    # Import here to avoid circular import
+    from flask import session
+    from spotipy import Spotify
+    
+    user_info = session.get('user_info', None)
+    if user_info:
+        return user_info['id']
+    # Try to get it from Spotify API if not in session
+    token_info = session.get('token_info', None)
+    if token_info:
+        sp = Spotify(auth=token_info['access_token'])
+        user_info = sp.me()
+        session['user_info'] = user_info
+        return user_info['id']
+    return None
+
+# Custom cache decorator that includes user ID in cache key
+def cache_user_specific(timeout=cache_timout):
+    def decorator(f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            # Get the current user ID to make cache user-specific
+            user_id = get_current_user_id()
+            if user_id:
+                # Create a unique cache key including user ID
+                cache_key = f"{f.__name__}_{user_id}_{str(args)}_{str(kwargs)}"
+                rv = cache.get(cache_key)
+                if rv is not None:
+                    return rv
+                rv = f(*args, **kwargs)
+                cache.set(cache_key, rv, timeout=timeout)
+                return rv
+            else:
+                # If no user ID, don't cache (just call the function)
+                return f(*args, **kwargs)
+        return decorated_function
+    return decorator
 
 # class CreatePlaylistForm(FlaskForm):
 #     playlist_name = StringField('Playlist Name', validators=[DataRequired()])
@@ -117,7 +158,7 @@ def logout():
 #         return render_template('playlist_maker.html')
 
 @app.route('/view_playlists')
-@cache.memoize(timeout=cache_timout)
+@cache_user_specific(timeout=cache_timout)
 def view_playlists():
 
     # Retrieve access token from the session
@@ -137,7 +178,7 @@ def view_playlists():
 # The two separate route decorators allow us to send data from the webpage to change the limit and time_range
 @app.route('/top_artists/', defaults={'time_range': 'medium_term', 'limit': 10})
 @app.route('/top_artists/<time_range>/<int:limit>', methods=['GET'])
-@cache.memoize(timeout=cache_timout)
+@cache_user_specific(timeout=cache_timout)
 def top_artists(time_range='medium_term', limit=10):
     if isLoggedIn():
         artists = get_artists(time_range, limit)
@@ -147,15 +188,18 @@ def top_artists(time_range='medium_term', limit=10):
         return render_template('top_artists.html', top_artists=artists['items'], time_range=time_range, limit=limit if limit < artists['total'] else artists['total'])
     return redirect(url_for('index'))
 
-@cache.memoize(timeout=cache_timout)
+@cache_user_specific(timeout=cache_timout)
 def get_artists(time_range='medium_term', limit=10):
-    sp = Spotify(auth_manager=sp_oauth)
-    results = sp.current_user_top_artists(time_range=time_range, limit=limit)
-    return results
+    token_info = session.get('token_info', None)
+    if token_info:
+        sp = Spotify(auth=token_info['access_token'])
+        results = sp.current_user_top_artists(time_range=time_range, limit=limit)
+        return results
+    return None
         
 @app.route('/top_tracks/', defaults={'time_range': 'medium_term', 'limit': 10})
 @app.route('/top_tracks/<time_range>/<int:limit>', methods=['GET'])
-@cache.memoize(timeout=cache_timout)
+@cache_user_specific(timeout=cache_timout)
 def top_tracks(time_range='medium_term', limit=10):
     if isLoggedIn():
         top_tracks = get_top_tracks(time_range, limit)
@@ -165,11 +209,14 @@ def top_tracks(time_range='medium_term', limit=10):
         return render_template('top_tracks.html', top_tracks=top_tracks['items'], time_range=time_range, limit=limit if limit < top_tracks['total'] else top_tracks['total'])
     return redirect(url_for('index'))
 
-@cache.memoize(timeout=cache_timout)
+@cache_user_specific(timeout=cache_timout)
 def get_top_tracks(time_range='medium_term', limit=10):
-    sp = Spotify(auth_manager=sp_oauth)
-    results = sp.current_user_top_tracks(time_range=time_range, limit=limit)
-    return results
+    token_info = session.get('token_info', None)
+    if token_info:
+        sp = Spotify(auth=token_info['access_token'])
+        results = sp.current_user_top_tracks(time_range=time_range, limit=limit)
+        return results
+    return None
 
 # Only called on the top_tracks.html page to generate a playlist of the top tracks in the given time_frame and limit
 # Inspiration from: https://github.com/spotipy-dev/spotipy/blob/master/examples/my_top_tracks.py
